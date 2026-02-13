@@ -8,54 +8,63 @@ import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
 
+/*
+  CHAPTER 14–16: Movies List + Pagination
+  Displays paginated movies with search and rating filters.
+*/
 
+const MoviesList = ({ user }) => {
 
-const MoviesList = (props) => {
-  const { user } = props;
+  // CHAPTER 16 – Pagination & movie state
   const [page, setPage] = useState(0);
   const [movies, setMovies] = useState([]);
+
+  // CHAPTER 17 – Search filters
   const [searchTitle, setSearchTitle] = useState("");
   const [searchRating, setSearchRating] = useState("");
   const [ratings, setRatings] = useState(["All Ratings"]);
 
-
-
-
+  /*
+    CHAPTER 16 – Fetch movies by page
+  */
   const retrieveMovies = useCallback(() => {
-  MovieDataService.getAll(page)
-    .then((response) => {
-      const safeMovies = response.data.movies.map((movie) => ({
-        ...movie,
-        title:
-          typeof movie.title === "string"
-            ? movie.title
-            : movie.title?.en || JSON.stringify(movie.title),
-        plot:
-          typeof movie.plot === "string"
-            ? movie.plot
-            : movie.plot?.summary || JSON.stringify(movie.plot),
-      }));
-      setMovies(safeMovies);
-    })
-    .catch((e) => console.log(e));
-}, [page]); // only changes when page changes
+    MovieDataService.getAll(page)
+      .then((response) => {
 
-useEffect(() => {
-  retrieveMovies();
-}, [retrieveMovies]);
+        // Defensive formatting for title & plot
+        const safeMovies = response.data.movies.map((movie) => ({
+          ...movie,
+          title:
+            typeof movie.title === "string"
+              ? movie.title
+              : movie.title?.en || JSON.stringify(movie.title),
+          plot:
+            typeof movie.plot === "string"
+              ? movie.plot
+              : movie.plot?.summary || JSON.stringify(movie.plot),
+        }));
+
+        setMovies(safeMovies);
+      })
+      .catch((e) => console.log(e));
+  }, [page]);
 
   useEffect(() => {
-    retrieveRatings();
-  }, []);
-  const retrieveRatings = () => {
+    retrieveMovies();
+  }, [retrieveMovies]);
+
+  /*
+    CHAPTER 17 – Fetch ratings for dropdown
+  */
+  useEffect(() => {
     MovieDataService.getRatings()
-      .then((response) => setRatings(["All Ratings"].concat(response.data)))
+      .then((response) =>
+        setRatings(["All Ratings"].concat(response.data))
+      )
       .catch((e) => console.log(e));
-  };
+  }, []);
 
-  const onChangeSearchTitle = (e) => setSearchTitle(e.target.value);
-  const onChangeSearchRating = (e) => setSearchRating(e.target.value);
-
+  // CHAPTER 17 – Search handlers
   const find = (query, by) => {
     MovieDataService.find(query, by)
       .then((response) => {
@@ -76,6 +85,7 @@ useEffect(() => {
   };
 
   const findByTitle = () => find(searchTitle, "title");
+
   const findByRating = () => {
     if (searchRating === "All Ratings") {
       retrieveMovies();
@@ -87,40 +97,50 @@ useEffect(() => {
   return (
     <div className="App">
       <Container>
-        {/* Search Form */}
+
+        {/* CHAPTER 17 – Search Form */}
         <Form>
           <Row className="mb-3">
             <Col>
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  placeholder="Search by title"
-                  value={searchTitle}
-                  onChange={onChangeSearchTitle}
-                />
-              </Form.Group>
-              <Button variant="primary" type="button" onClick={findByTitle}>
+              <Form.Control
+                type="text"
+                placeholder="Search by title"
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+              />
+              <Button
+                variant="primary"
+                type="button"
+                onClick={findByTitle}
+              >
                 Search
               </Button>
             </Col>
+
             <Col>
-              <Form.Group>
-                <Form.Control as="select" onChange={onChangeSearchRating}>
-                  {ratings.map((rating) => (
-                    <option key={rating} value={rating}>
-                      {rating}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-              <Button variant="primary" type="button" onClick={findByRating}>
+              <Form.Control
+                as="select"
+                onChange={(e) => setSearchRating(e.target.value)}
+              >
+                {ratings.map((rating) => (
+                  <option key={rating} value={rating}>
+                    {rating}
+                  </option>
+                ))}
+              </Form.Control>
+
+              <Button
+                variant="primary"
+                type="button"
+                onClick={findByRating}
+              >
                 Search
               </Button>
             </Col>
           </Row>
         </Form>
 
-        {/* Movies List */}
+        {/* CHAPTER 14–16 – Movie Cards */}
         <Row>
           {movies.map((movie) => (
             <Col key={movie._id} className="mb-4">
@@ -134,16 +154,22 @@ useEffect(() => {
                   <Card.Title>{movie.title}</Card.Title>
                   <Card.Text>Rating: {movie.rated}</Card.Text>
                   <Card.Text>{movie.plot}</Card.Text>
-                  <Link to={`/movies/${movie._id}`}>View Reviews</Link>
+
+                  {/* CHAPTER 18 – Navigate to Single Movie */}
+                  <Link to={`/movies/${movie._id}`}>
+                    View Reviews
+                  </Link>
                   <br />
+
+                  {/* CHAPTER 21–23 – Add/Edit Review (Logged-in users) */}
                   {user && (
                     <Link to={`/movies/${movie._id}/review`}>
                       {movie.reviews?.some(
-                        (r) => String(r.user_id) === String(user?.id)
+                        (r) =>
+                          String(r.user_id) === String(user?.id)
                       )
                         ? "Edit Your Review"
                         : "Add Review"}
-
                     </Link>
                   )}
                 </Card.Body>
@@ -151,6 +177,8 @@ useEffect(() => {
             </Col>
           ))}
         </Row>
+
+        {/* CHAPTER 16 – Pagination Controls */}
         <Row className="mt-3">
           <Col>
             <Button

@@ -2,16 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Container, Card, Button } from "react-bootstrap";
 import MovieDataService from "../services/movies";
-import moment from "moment"; // For formatting dates
+import moment from "moment";
+
+/*
+  CHAPTER 18 – Single Movie Page
+  Displays one movie and its reviews.
+  Route: /movies/:id
+*/
 
 const Movie = ({ user }) => {
+
+  // CHAPTER 18 – Get movie ID from URL
   const { id } = useParams();
+
+  // CHAPTER 18/19 – Store movie + attached reviews
   const [movie, setMovie] = useState({ reviews: [] });
 
-  // Fetch movie details
+  // CHAPTER 18 – Fetch movie by ID
+  // Backend uses aggregation ($lookup) to attach reviews
   useEffect(() => {
     MovieDataService.get(id)
       .then((response) => {
+
+        // Defensive handling for title & plot (custom improvement)
         const safeMovie = {
           ...response.data,
           title:
@@ -23,17 +36,26 @@ const Movie = ({ user }) => {
               ? response.data.plot
               : response.data.plot?.summary || JSON.stringify(response.data.plot),
         };
+
         setMovie(safeMovie);
       })
       .catch((e) => console.error(e));
   }, [id]);
 
-  // Delete review
+  /*
+    CHAPTER 22 – Delete Review
+    Sends DELETE request.
+    Backend verifies review ownership.
+  */
   const deleteReview = (reviewId) => {
+
+    // CHAPTER 23 – Only logged-in users can delete
     if (!user) return;
 
     MovieDataService.deleteReview(reviewId, user.id)
       .then(() => {
+
+        // Optimistic UI update (no page refresh)
         setMovie((prev) => ({
           ...prev,
           reviews: prev.reviews.filter((r) => r._id !== reviewId),
@@ -44,6 +66,8 @@ const Movie = ({ user }) => {
 
   return (
     <Container className="mt-4">
+
+      {/* CHAPTER 18 – Movie Details */}
       <Card className="mb-4 shadow-sm">
         <Card.Body>
           <Card.Title className="fs-2">{movie.title}</Card.Title>
@@ -54,26 +78,36 @@ const Movie = ({ user }) => {
         </Card.Body>
       </Card>
 
-      {/* Reviews Section */}
+      {/* CHAPTER 19 – Reviews Section */}
       <h2>Reviews</h2>
       <br />
+
       {movie.reviews.length === 0 && <p>No reviews yet.</p>}
 
+      {/* CHAPTER 19 – Render Reviews */}
       {movie.reviews.map((review) => (
         <Card key={review._id} className="mb-3 shadow-sm">
           <Card.Body className="d-flex align-items-start">
+
+            {/* UI Enhancement – User avatar */}
             <img
               src={review.userImage || "/default-avatar.png"}
               alt={review.name}
               className="rounded-circle me-3"
               style={{ width: "64px", height: "64px", objectFit: "cover" }}
             />
+
             <div className="flex-grow-1">
+
+              {/* Date formatting (moment.js enhancement) */}
               <h5>
-                {review.name} reviewed on {moment(review.date).format("Do MMMM YYYY")}
+                {review.name} reviewed on{" "}
+                {moment(review.date).format("Do MMMM YYYY")}
               </h5>
+
               <p>{review.text || review.review}</p>
 
+              {/* CHAPTER 21/22 – Edit & Delete (Owner Only) */}
               {user && String(user.id) === String(review.user_id) && (
                 <div className="d-flex gap-2">
                   <Link
@@ -97,8 +131,7 @@ const Movie = ({ user }) => {
         </Card>
       ))}
 
-
-      {/* Add Review Button */}
+      {/* CHAPTER 21 – Add Review (Logged-in users only) */}
       {user && (
         <Link
           to={`/movies/${movie._id}/review`}

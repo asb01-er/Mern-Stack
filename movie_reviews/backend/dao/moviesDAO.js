@@ -1,3 +1,4 @@
+// ==================== CHAPTER 7: CREATING MOVIES DAO ====================
 import mongodb from "mongodb";
 const { ObjectId } = mongodb; // ObjectId for MongoDB document _id
 
@@ -9,6 +10,8 @@ let reviews;  // reference to reviews collection
  * MoviesDAO handles all movie-related database operations
  */
 export default class MoviesDAO {
+  
+  // ==================== CHAPTER 7: InjectDB ====================
   /**
    * Injects the database connection into MoviesDAO.
    * Called once when server starts to set up references to collections
@@ -27,6 +30,7 @@ export default class MoviesDAO {
     }
   }
 
+  // ==================== CHAPTER 7–8: Retrieving Movies ====================
   /**
    * Get a paginated list of movies with optional filters
    * @param filters - optional { title: "", rated: "" }
@@ -38,18 +42,18 @@ export default class MoviesDAO {
 
     // Build query if filters provided
     if (filters) {
-      if ("title" in filters) query = { $text: { $search: filters.title } };
-      else if ("rated" in filters) query = { rated: { $eq: filters.rated } };
+      if ("title" in filters) query = { $text: { $search: filters.title } }; // search by title
+      else if ("rated" in filters) query = { rated: { $eq: filters.rated } }; // search by rating
     }
 
     try {
       const cursor = await movies
         .find(query)
-        .limit(moviesPerPage)
-        .skip(moviesPerPage * page);
+        .limit(moviesPerPage)           // pagination limit
+        .skip(moviesPerPage * page);    // pagination skip
 
-      const moviesList = await cursor.toArray();
-      const totalNumMovies = await movies.countDocuments(query);
+      const moviesList = await cursor.toArray();           // convert cursor to array
+      const totalNumMovies = await movies.countDocuments(query); // total matching documents
 
       return { moviesList, totalNumMovies };
     } catch (e) {
@@ -58,6 +62,7 @@ export default class MoviesDAO {
     }
   }
 
+  // ==================== CHAPTER 12: GET SINGLE MOVIE & REVIEWS ====================
   /**
    * Get a single movie by ID, including its reviews
    * @param id - movie _id as string
@@ -68,35 +73,37 @@ export default class MoviesDAO {
 
       return await movies
         .aggregate([
-          { $match: { _id: new ObjectId(id) } },
+          { $match: { _id: new ObjectId(id) } },  // find movie by _id
           {
-            $lookup: {
-              from: "reviews",       // join reviews collection
-              localField: "_id",     // movie _id
-              foreignField: "movie_id", // review.movie_id
-              as: "reviews",
+            $lookup: {                            // join reviews collection
+              from: "reviews",                    // collection to join
+              localField: "_id",                  // movie _id
+              foreignField: "movie_id",           // review.movie_id
+              as: "reviews",                       // output array field
             },
           },
         ])
-        .next();
+        .next(); // get first result from aggregation
     } catch (e) {
       console.error(`Something went wrong in getMovieById: ${e}`);
       throw e;
     }
   }
 
+  // ==================== CHAPTER 12: GET RATINGS ====================
   /**
    * Get all unique movie ratings
    */
   static async getRatings() {
     try {
-      return await movies.distinct("rated");
+      return await movies.distinct("rated"); // returns array of distinct ratings
     } catch (e) {
       console.error(`Unable to get ratings: ${e}`);
       return [];
     }
   }
 
+  // ==================== CHAPTER 10–11: REVIEWS CRUD ====================
   /**
    * Add a new review
    * @param reviewData - { movie_id, user_id, name, review }
@@ -111,7 +118,7 @@ export default class MoviesDAO {
         date: new Date(),
       };
 
-      return await reviews.insertOne(reviewDoc);
+      return await reviews.insertOne(reviewDoc); // insert into reviews collection
     } catch (e) {
       console.error(`Unable to post review: ${e}`);
       throw e;
