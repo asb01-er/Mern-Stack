@@ -1,20 +1,21 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import Header from "../components/Header";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [input, setInput] = useState({ email: "", password: "" });
+  const [inputValue, setInputValue] = useState({ email: "", password: "" });
 
-  const handleChange = e => setInput({ ...input, [e.target.name]: e.target.value });
+  const handleChange = (e) => setInputValue({ ...inputValue, [e.target.name]: e.target.value });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("http://localhost:4000/auth/login", input, { withCredentials: true });
+      const { data } = await axios.post("http://localhost:4000/auth/login", inputValue, { withCredentials: true });
       if (data.success) {
-        toast.success("Logged in!");
+        toast.success("Login successful!");
         navigate("/");
       } else toast.error(data.message);
     } catch (err) {
@@ -23,13 +24,23 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="email" placeholder="Email" value={input.email} onChange={handleChange} />
-        <input name="password" type="password" placeholder="Password" value={input.password} onChange={handleChange} />
-        <button type="submit">Login</button>
-      </form>
+    <div className="page_container">
+      <Header />
+      <div className="form_container">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Email</label>
+            <input type="email" name="email" value={inputValue.email} onChange={handleChange} placeholder="Email" required />
+          </div>
+          <div>
+            <label>Password</label>
+            <input type="password" name="password" value={inputValue.password} onChange={handleChange} placeholder="Password" required />
+          </div>
+          <button type="submit">Login</button>
+          <span>Don't have an account? <Link to="/signup">Signup</Link></span>
+        </form>
+      </div>
       <ToastContainer />
     </div>
   );

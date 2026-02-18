@@ -1,4 +1,4 @@
-// ==================== CHAPTER 23: BASIC LOGIN SYSTEM ====================
+// ==================== CHAPTER 20: BASIC LOGIN SYSTEM ====================
 // Simple login form that stores user info in App state.
 // This is not real authentication — just local user tracking.
 

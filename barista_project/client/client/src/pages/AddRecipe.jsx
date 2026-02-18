@@ -1,8 +1,8 @@
-// src/pages/AddRecipe.jsx
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import Header from "../components/Header";
 
 const AddRecipe = () => {
   const navigate = useNavigate();
@@ -13,25 +13,19 @@ const AddRecipe = () => {
     instructions: "",
   });
 
-  const handleChange = (e) => {
-    setRecipe({ ...recipe, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setRecipe({ ...recipe, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
         "http://localhost:4000/recipes",
-        {
-          ...recipe,
-          ingredients: recipe.ingredients.split(",").map((i) => i.trim()),
-        },
-        { withCredentials: true } // send auth cookie
+        { ...recipe, ingredients: recipe.ingredients.split(",").map(i => i.trim()) },
+        { withCredentials: true }
       );
-
       if (data.success) {
         toast.success("Recipe added successfully!");
-        navigate("/"); // back to dashboard
+        navigate("/");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Server error");
@@ -39,27 +33,31 @@ const AddRecipe = () => {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Add Recipe</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="title" placeholder="Title" value={recipe.title} onChange={handleChange} required />
-        <input name="category" placeholder="Category" value={recipe.category} onChange={handleChange} required />
-        <textarea
-          name="ingredients"
-          placeholder="Ingredients (comma separated)"
-          value={recipe.ingredients}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="instructions"
-          placeholder="Instructions"
-          value={recipe.instructions}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Add Recipe</button>
-      </form>
+    <div className="page_container">
+      <Header />
+      <div className="form_container">
+        <h2>Add Recipe</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Title</label>
+            <input name="title" value={recipe.title} onChange={handleChange} placeholder="Recipe Title" required />
+          </div>
+          <div>
+            <label>Category</label>
+            <input name="category" value={recipe.category} onChange={handleChange} placeholder="Category" required />
+          </div>
+          <div>
+            <label>Ingredients (comma separated)</label>
+            <textarea name="ingredients" value={recipe.ingredients} onChange={handleChange} placeholder="Ingredients" required />
+          </div>
+          <div>
+            <label>Instructions</label>
+            <textarea name="instructions" value={recipe.instructions} onChange={handleChange} placeholder="Instructions" required />
+          </div>
+          <button type="submit">Add Recipe</button>
+        </form>
+      </div>
+      <ToastContainer />
     </div>
   );
 };

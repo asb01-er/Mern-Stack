@@ -1,32 +1,35 @@
-// src/components/ProtectedRoute.jsx
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 
 const ProtectedRoute = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const verifyUser = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/auth/verify", {
-          withCredentials: true, // important to send cookie
-        });
-        setAuthenticated(data.status); // true if logged in
+        const { data } = await axios.get(
+          "http://localhost:4000/auth/verify",
+          { withCredentials: true } // ✅ send cookie
+        );
+
+        if (data.success) setIsAuthenticated(true);
+        else setIsAuthenticated(false);
       } catch (err) {
-        setAuthenticated(false);
-      } finally {
-        setLoading(false);
+        setIsAuthenticated(false);
       }
     };
 
-    checkAuth();
+    verifyUser();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (!authenticated) return <Navigate to="/login" />;
+  // While checking auth, optionally show loading
+  if (isAuthenticated === null) return <p>Loading...</p>;
 
+  // Redirect if not authenticated
+  if (!isAuthenticated) return <Navigate to="/login" />;
+
+  // Render protected children
   return children;
 };
 

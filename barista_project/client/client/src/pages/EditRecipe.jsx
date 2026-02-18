@@ -1,29 +1,44 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import Header from "../components/Header";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditRecipe = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [recipe, setRecipe] = useState({ title: "", category: "", ingredients: "", instructions: "" });
+  const [recipe, setRecipe] = useState({
+    title: "",
+    category: "",
+    ingredients: "",
+    instructions: "",
+  });
 
   useEffect(() => {
     const fetchRecipe = async () => {
-      const { data } = await axios.get(`http://localhost:4000/recipes/${id}`);
-      if (data.success) setRecipe({ ...data.recipe, ingredients: data.recipe.ingredients.join(", ") });
+      try {
+        const { data } = await axios.get(`http://localhost:4000/recipes/${id}`, { withCredentials: true });
+        if (data.success) {
+          setRecipe({ ...data.recipe, ingredients: data.recipe.ingredients.join(", ") });
+        } else {
+          toast.error(data.message || "Failed to fetch recipe");
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Server error");
+      }
     };
     fetchRecipe();
   }, [id]);
 
-  const handleChange = e => setRecipe({ ...recipe, [e.target.name]: e.target.value });
+  const handleChange = (e) => setRecipe({ ...recipe, [e.target.name]: e.target.value });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.put(
         `http://localhost:4000/recipes/${id}`,
-        { ...recipe, ingredients: recipe.ingredients.split(",").map(i => i.trim()) },
+        { ...recipe, ingredients: recipe.ingredients.split(",").map((i) => i.trim()) },
         { withCredentials: true }
       );
       if (data.success) {
@@ -36,13 +51,44 @@ const EditRecipe = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="title" placeholder="Title" value={recipe.title} onChange={handleChange} />
-      <input name="category" placeholder="Category" value={recipe.category} onChange={handleChange} />
-      <textarea name="ingredients" placeholder="Ingredients (comma separated)" value={recipe.ingredients} onChange={handleChange} />
-      <textarea name="instructions" placeholder="Instructions" value={recipe.instructions} onChange={handleChange} />
-      <button type="submit">Update Recipe</button>
-    </form>
+    <div className="page_container">
+      <Header />
+      <div className="form_container">
+        <h2>Edit Recipe</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Title</label>
+            <input name="title" value={recipe.title} onChange={handleChange} placeholder="Title" required />
+          </div>
+          <div>
+            <label>Category</label>
+            <input name="category" value={recipe.category} onChange={handleChange} placeholder="Category" required />
+          </div>
+          <div>
+            <label>Ingredients (comma separated)</label>
+            <textarea
+              name="ingredients"
+              value={recipe.ingredients}
+              onChange={handleChange}
+              placeholder="Ingredients"
+              required
+            />
+          </div>
+          <div>
+            <label>Instructions</label>
+            <textarea
+              name="instructions"
+              value={recipe.instructions}
+              onChange={handleChange}
+              placeholder="Instructions"
+              required
+            />
+          </div>
+          <button type="submit">Update Recipe</button>
+        </form>
+      </div>
+      <ToastContainer />
+    </div>
   );
 };
 

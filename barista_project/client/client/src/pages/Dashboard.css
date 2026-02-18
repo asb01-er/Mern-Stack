@@ -1,0 +1,117 @@
+.page_container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FFF3B0; /* soft yellow */
+  font-family: sans-serif;
+}
+
+.app_header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 1rem;
+}
+
+.app_header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #D2691E; /* chocolate brown */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.logout_button {
+  padding: 0.5rem 1rem;
+  background-color: #D2691E;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.logout_button:hover {
+  background-color: #a0522d;
+}
+
+.dashboard_container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.dashboard_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.add_button {
+  padding: 0.6rem 1.2rem;
+  background-color: #D2691E;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add_button:hover {
+  background-color: #a0522d;
+}
+
+.recipe_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.recipe_card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recipe_card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.recipe_card h3 {
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.recipe_card p {
+  margin: 0.3rem 0;
+  color: #4b5563;
+}
+
+.recipe_card .author {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #9ca3af;
+  text-align: right;
+}
+
+.no_recipes {
+  text-align: center;
+  color: #6b4c2a; /* brownish */
+  font-size: 1.2rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .recipe_grid {
+    grid-template-columns: 1fr;
+  }
+}
