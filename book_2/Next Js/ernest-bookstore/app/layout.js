@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
         <div className="navbar bg-base-100 shadow-md">
           <div className="navbar-start">
             <Link href="/" className="btn btn-ghost text-xl">
-              Ernest Portfolio
+              Ernest Bookstore
             </Link>
           </div>
 
@@ -30,12 +30,6 @@ export default function RootLayout({ children }) {
                 <li><Link href="/about/contact">Contact</Link></li>
               <li><Link href="/githubusers">GitHub Users</Link></li>
             </ul>
-          </div>
-
-          <div className="navbar-end">
-            <Link href="/login" className="btn btn-primary">
-              Login
-            </Link>
           </div>
         </div>
 
