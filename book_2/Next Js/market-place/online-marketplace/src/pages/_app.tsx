@@ -1,19 +1,20 @@
 import { type AppType } from "next/app";
-import { Geist } from "next/font/google";
+import { ClerkProvider, SignInButton } from "@clerk/nextjs";
 
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-
-const geist = Geist({
-  subsets: ["latin"],
-});
+// import { NavBar } from "~/components/NavBar";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <div className={geist.className}>
-      <Component {...pageProps} />
-    </div>
+    <ClerkProvider {...pageProps}>
+      <SignInButton/>
+      <div className="light:black bg-gray-800 dark:text-white">
+        {/* <NavBar /> */}
+        <Component {...pageProps} />
+      </div>
+    </ClerkProvider>
   );
 };
 
