@@ -1,17 +1,16 @@
 import { type AppType } from "next/app";
-import { ClerkProvider, SignInButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-// import { NavBar } from "~/components/NavBar";
+import { NavBar } from "~/components/NavBar";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
-      <SignInButton/>
       <div className="light:black bg-gray-800 dark:text-white">
-        {/* <NavBar /> */}
+        <NavBar />
         <Component {...pageProps} />
       </div>
     </ClerkProvider>
