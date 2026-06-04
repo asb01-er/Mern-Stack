@@ -9,7 +9,7 @@ export function NavBar() {
       <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
         <Link href="/" className="flex items-center">
           <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
-            MarketPlace
+            Market-Place
           </span>
         </Link>
         <button
