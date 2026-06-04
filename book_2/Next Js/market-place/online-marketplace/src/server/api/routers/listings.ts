@@ -84,21 +84,23 @@ export const listingsRouter = createTRPCRouter({
 
   // Create listing
   create: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1),
-        description: z.string().min(1),
-        price: z.coerce.number().positive(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      return ctx.db.listing.create({
-        data: {
-          name: input.name,
-          description: input.description,
-          price: input.price,
-          userId: ctx.auth.userId,
-        },
-      });
+  .input(
+    z.object({
+      name: z.string().min(1),
+      description: z.string().min(1),
+      price: z.coerce.number().positive(),
+      imageUrl: z.string().optional(),
     }),
+  )
+  .mutation(async ({ input, ctx }) => {
+    return ctx.db.listing.create({
+      data: {
+        name: input.name,
+        description: input.description,
+        price: input.price,
+        imageUrl: input.imageUrl,
+        userId: ctx.auth.userId,
+      },
+    });
+  }),
 });

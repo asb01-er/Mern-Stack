@@ -5,11 +5,16 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { useState } from "react";
+
+const [imageUrl, setImageUrl] = useState("");
+const [uploading, setUploading] = useState(false);
 
 type SellItemForm = {
   name: string;
   description: string;
   price: string;
+  imageUrl: string;
 };
 
 const SellAnItem: NextPage = () => {
@@ -18,11 +23,12 @@ const SellAnItem: NextPage = () => {
 
   const { register, handleSubmit } = useForm<SellItemForm>();
   const onSubmit = (formData: SellItemForm) => {
-    createListing
-      .mutateAsync({
-        ...formData,
-        price: parseFloat(formData.price),
-      })
+    createListing.mutateAsync({
+      name: formData.name,
+      description: formData.description,
+      price: parseFloat(formData.price),
+      imageUrl,
+    })
       .then(() => {
         router.push("/");
       });
@@ -84,6 +90,55 @@ const SellAnItem: NextPage = () => {
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 {...register("price", { required: true })}
               />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Product Image
+              </label>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+
+                  if (!file) return;
+
+                  setUploading(true);
+
+                  const reader = new FileReader();
+
+                  reader.onloadend = async () => {
+                    const response = await fetch("/api/upload", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        image: reader.result,
+                      }),
+                    });
+
+                    const data = await response.json();
+
+                    setImageUrl(data.imageUrl);
+                    setUploading(false);
+                  };
+
+                  reader.readAsDataURL(file);
+                }}
+              />
+
+              {uploading && <p>Uploading image...</p>}
+
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Preview"
+                  className="mt-4 h-40 rounded object-cover"
+                />
+              )}
             </div>
 
             <button

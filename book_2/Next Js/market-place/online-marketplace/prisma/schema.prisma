@@ -18,6 +18,7 @@ model Listing {
   name        String
   description String
   price       Float
+  imageUrl    String?
   message     Message[]
 }
 
