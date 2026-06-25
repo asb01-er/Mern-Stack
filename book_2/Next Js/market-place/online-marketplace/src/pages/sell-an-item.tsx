@@ -7,8 +7,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const [imageUrl, setImageUrl] = useState("");
-const [uploading, setUploading] = useState(false);
 
 type SellItemForm = {
   name: string;
@@ -22,6 +20,8 @@ const SellAnItem: NextPage = () => {
   const router = useRouter();
 
   const { register, handleSubmit } = useForm<SellItemForm>();
+  const [imageUrl, setImageUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
   const onSubmit = (formData: SellItemForm) => {
     createListing.mutateAsync({
       name: formData.name,

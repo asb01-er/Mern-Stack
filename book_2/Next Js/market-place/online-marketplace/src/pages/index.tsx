@@ -9,7 +9,14 @@ function Card({ listing }: { listing: Listing }) {
   return (
     <div className="max-w-sm rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-700">
       <div className="relative h-32 w-full">
-        <Image className="object-cover" src="/shoe.png" alt="" fill />
+        {listing.imageUrl && (
+          <Image
+            src={listing.imageUrl}
+            alt={listing.name}
+            fill
+            className="object-cover"
+          />
+        )}
       </div>
       <div className="p-5">
         <a href="#">
