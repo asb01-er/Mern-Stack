@@ -10,11 +10,16 @@ const Header = () => {
     // Verify user authentication
     const verifyUser = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4000/auth/verify", {
-          withCredentials: true,
-        });
-        if (data.success) setUser(data.user);
-        else setUser(null);
+        const { data } = await axios.get(
+          "http://localhost:4000/auth/verify",
+          { withCredentials: true }
+        );
+
+        if (data.success) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
       } catch (err) {
         setUser(null);
       }
@@ -30,6 +35,7 @@ const Header = () => {
         {},
         { withCredentials: true }
       );
+
       setUser(null);
       navigate("/login");
     } catch (err) {
@@ -40,7 +46,22 @@ const Header = () => {
   return (
     <header className="app_header">
       <div className="header_container">
-        <h1>☕ Barista Hub</h1>
+        <h1
+          onClick={() => navigate("/")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              navigate("/");
+            }
+          }}
+          style={{ cursor: "pointer" }}
+          title="Go to Home"
+        >
+          ☕ Barista Hub
+        </h1>
+
         {user && (
           <button className="logout_button" onClick={handleLogout}>
             Logout
