@@ -1,11 +1,23 @@
-import { type Listing } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "~/utils/api";
 
-function Card({ listing }: { listing: Listing }) {
+function Card({
+  listing,
+}: {
+  listing: {
+    id: string;
+    userId: string;
+    name: string;
+    description: string;
+    price: number;
+    imageUrl: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+}) {
   return (
     <div className="max-w-sm rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-700">
       <div className="relative h-32 w-full">
