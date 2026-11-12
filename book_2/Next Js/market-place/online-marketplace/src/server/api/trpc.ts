@@ -1,6 +1,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { getAuth } from "@clerk/nextjs/server";
+import superjson from "superjson";
 
 import { db } from "~/server/db";
 
@@ -9,8 +10,7 @@ interface AuthContext {
 }
 
 export const createTRPCContext = async ({
-  req,
-  res,
+  req
 }: CreateNextContextOptions) => {
   const auth = getAuth(req);
 
@@ -22,7 +22,9 @@ export const createTRPCContext = async ({
   };
 };
 
-const t = initTRPC.context<typeof createTRPCContext>().create();
+const t = initTRPC.context<typeof createTRPCContext>().create({
+  transformer: superjson,
+});
 
 export const createTRPCRouter = t.router;
 

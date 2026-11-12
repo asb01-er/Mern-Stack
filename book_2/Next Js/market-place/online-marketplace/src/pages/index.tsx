@@ -14,8 +14,8 @@ function Card({
     description: string;
     price: number;
     imageUrl: string | null;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
   };
 }) {
   return (

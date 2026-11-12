@@ -10,7 +10,7 @@ export default async function handler(
   }
 
   try {
-    const { image } = req.body;
+    const { image } = req.body as { image: string };
 
     console.log("Image received:", !!image);
 
