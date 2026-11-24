@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Header from "../components/Header";
+import { API_URL } from "../api";
 import "react-toastify/dist/ReactToastify.css";
 import "./Dashboard.css";
 
@@ -19,7 +20,7 @@ const Dashboard = () => {
     const verifyUser = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/auth/verify",
+          `${API_URL}/auth/verify`,
           { withCredentials: true }
         );
 
@@ -38,7 +39,7 @@ const Dashboard = () => {
     const fetchRecipes = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/recipes",
+          `${API_URL}/recipes`,
           { withCredentials: true }
         );
 
@@ -73,7 +74,7 @@ const Dashboard = () => {
 
     try {
       const { data } = await axios.delete(
-        `http://localhost:4000/recipes/${id}`,
+        `${API_URL}/recipes/${id}`,
         { withCredentials: true }
       );
 
