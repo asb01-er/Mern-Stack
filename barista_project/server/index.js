@@ -9,10 +9,12 @@ const recipeRoute = require("./Routes/RecipeRoute");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 // CORS with credentials
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     credentials: true,
   })
 );
@@ -23,12 +25,12 @@ app.use(express.json());
 app.use("/auth", authRoute);
 app.use("/recipes", recipeRoute);
 
+const PORT = process.env.PORT || 4000;
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(process.env.PORT, () =>
-      console.log(`Server running on ${process.env.PORT}`)
-    );
+    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
   })
   .catch((err) => console.error(err));
