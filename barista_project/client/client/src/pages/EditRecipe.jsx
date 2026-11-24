@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "../components/Header";
+import { API_URL } from "../api";
 import "react-toastify/dist/ReactToastify.css";
 
 const EditRecipe = () => {
@@ -18,7 +19,7 @@ const EditRecipe = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:4000/recipes/${id}`, { withCredentials: true });
+        const { data } = await axios.get(`${API_URL}/recipes/${id}`, { withCredentials: true });
         if (data.success) {
           setRecipe({ ...data.recipe, ingredients: data.recipe.ingredients.join(", ") });
         } else {
@@ -37,7 +38,7 @@ const EditRecipe = () => {
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        `http://localhost:4000/recipes/${id}`,
+        `${API_URL}/recipes/${id}`,
         { ...recipe, ingredients: recipe.ingredients.split(",").map((i) => i.trim()) },
         { withCredentials: true }
       );

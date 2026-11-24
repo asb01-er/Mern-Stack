@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "../components/Header";
+import { API_URL } from "../api";
 import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
@@ -26,7 +27,7 @@ const Signup = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/auth/signup",
+        `${API_URL}/auth/signup`,
         input,
         { withCredentials: true }
       );

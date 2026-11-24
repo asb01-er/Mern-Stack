@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../api";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Header = () => {
     const verifyUser = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/auth/verify",
+          `${API_URL}/auth/verify`,
           { withCredentials: true }
         );
 
@@ -31,7 +32,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:4000/auth/logout",
+        `${API_URL}/auth/verify`,
         {},
         { withCredentials: true }
       );

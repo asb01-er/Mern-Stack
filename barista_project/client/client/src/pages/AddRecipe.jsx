@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "../components/Header";
+import { API_URL } from "../api";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddRecipe = () => {
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ const AddRecipe = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/recipes",
+        `${API_URL}/recipes`,
         { ...recipe, ingredients: recipe.ingredients.split(",").map(i => i.trim()) },
         { withCredentials: true }
       );

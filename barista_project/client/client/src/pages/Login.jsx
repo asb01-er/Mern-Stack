@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "../components/Header";
+import { API_URL } from "../api";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("http://localhost:4000/auth/login", inputValue, { withCredentials: true });
+      const { data } = await axios.post(`${API_URL}/auth/login`, inputValue, { withCredentials: true });
       if (data.success) {
         toast.success("Login successful!");
         navigate("/");
